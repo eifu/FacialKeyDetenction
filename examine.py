@@ -48,30 +48,50 @@ data_array = data_array.T
 
 from sklearn.cluster import KMeans
 
-cluster_value = KMeans(n_clusters=4).fit_predict(data_array)
+cluster_value = KMeans(n_clusters=10).fit_predict(data_array)
 
-save_array = np.array([left_eye_center, right_eye_center, 
-                       left_eye_inner_corner, left_eye_outer_corner, 
-                       right_eye_inner_corner, right_eye_outer_corner, 
-                       left_eyebrow_inner_end, left_eyebrow_outer_end, 
-                       right_eyebrow_inner_end, right_eyebrow_outer_end, 
-                       nose_tip, mouth_left_corner, mouth_right_corner, 
-                       mouth_center_top_lip, mouth_center_bottom_lip, 
-                       image_series, cluster_value])
+prepared_data = np.zeros((15, 10))
+count_data = np.zeros((15,10))
+
+for label_index in range(15):
+    
+    min_in_array = np.min(data_array[label_index])
+    diff = (np.max(data_array[label_index])-min_in_array)/10
+    
+    for diff_index in range(10):
+        
+        prepared_data[label_index][diff_index] = min_in_array + diff*diff_index
+        count = 0
+        for elem in data_array[label_index]: 
+            if min_in_array+(diff*diff_index) <= elem < min_in_array + (diff*(diff_index+1)):
+                count += 1
+                
+        count_data[label_index][diff_index] = count
+
+prepared_data = prepared_data.T
+count_data = count_data.T
 
 
-data_array = data_array.T
-import csv
 header = ["left_eye_center", "right_eye_center", 
           "left_eye_inner_corner", "left_eye_outer_corner", 
           "right_eye_inner_corner", "right_eye_outer_corner", 
           "left_eyebrow_inner_end", "left_eyebrow_outer_end", 
           "right_eyebrow_inner_end", "right_eyebrow_outer_end", 
           "nose_tip", "mouth_left_corner", "mouth_right_corner", 
-          "mouth_center_top_lip", "mouth_center_bottom_lip", "Image", "cluster_id"]
-f = open('test.csv', 'w')
+          "mouth_center_top_lip", "mouth_center_bottom_lip"]
+
+import csv
+f = open('equi_width_data.csv', 'w')
 
 writer = csv.writer(f, lineterminator='\n')
 writer.writerow(header)
-writer.writerows(data_array)
+writer.writerows(prepared_data)
+f.close()
+
+
+f = open('count_data.csv', 'w')
+
+writer = csv.writer(f, lineterminator='\n')
+writer.writerow(header)
+writer.writerows(count_data)
 f.close()
