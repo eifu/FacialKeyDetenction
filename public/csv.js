@@ -173,22 +173,24 @@ function init(){
     xScale.domain(data.map(function(d){ return d[labels[label_index]].toFixed(2); }));
 
 
-    svg.append("g")  // "g" group element
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    .attr("id", "bars")
-    .selectAll(".bar")
-    .data(data)
-    .enter()
-    .append("rect")
-    .attr("class", "bar")
-    .attr("x", function(d){ return xScale(d[labels[label_index]].toFixed(2)); })
-    .attr("y", function(d){ return yScale(d[labels[label_index]+"_count"]); })
-    .attr("height", function(d){ return height - margin.top - margin.bottom - yScale(d[labels[label_index]+"_count"]); })
-    .attr("width", function(d){ return xScale.rangeBand(); })
-    .attr("fill", function(d) {
+    var rects = svg.append("g")  // "g" group element
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+      .attr("id", "bars")
+      .selectAll(".bar")
+      .data(data)
+      .enter()
+      .append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d){ return xScale(d[labels[label_index]].toFixed(2)); })
+      .attr("y", function(d){ return yScale(d[labels[label_index]+"_count"]); })
+      .attr("height", function(d){ return height - margin.top - margin.bottom - yScale(d[labels[label_index]+"_count"]); })
+      .attr("width", function(d){ return xScale.rangeBand(); })
+      .attr("fill", function(d) {
           return "rgb(50, 50, " + parseInt(255-(d[labels[label_index]+"_count"]/600)*256) + ")";
-         })
-    .on("mouseover", function(d) {
+         });
+
+    d3.selectAll(".bar")
+      .on("mouseover", function(d) {
 
       d3.select(this)
       .transition()
