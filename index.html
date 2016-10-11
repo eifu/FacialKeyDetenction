@@ -59,7 +59,22 @@
     <p><span id="value">100</span> counts</p>
   </div>
 
+
+   <select name="data" id="selectData" onchange="change(this.value)">
+  </select>
+
   <script>
+  var labels = ["left_eye_center", "right_eye_center", "left_eye_inner_corner", "left_eye_outer_corner", "right_eye_inner_corner", "right_eye_outer_corner", "left_eyebrow_inner_end", "left_eyebrow_outer_end", "right_eyebrow_inner_end", "right_eyebrow_outer_end", "nose_tip", "mouth_left_corner", "mouth_right_corner", "mouth_center_top_lip", "mouth_center_bottom_lip"];
+
+
+  var select = document.getElementById("selectData"); 
+  for(var i = 0; i < labels.length; i++) {
+    var opt = labels[i];
+    var el = document.createElement("option");
+    el.textContent = opt;
+    el.value = opt;
+    select.appendChild(el);
+  }
     
   var margin = {top:0, right:0,bottom:20, left:50},
       width = 700,
@@ -67,7 +82,7 @@
       barPadding = 1,
       label_index=13;
 
-  var labels = ["left_eye_center", "right_eye_center", "left_eye_inner_corner", "left_eye_outer_corner", "right_eye_inner_corner", "right_eye_outer_corner", "left_eyebrow_inner_end", "left_eyebrow_outer_end", "right_eyebrow_inner_end", "right_eyebrow_outer_end", "nose_tip", "mouth_left_corner", "mouth_right_corner", "mouth_center_top_lip", "mouth_center_bottom_lip"];
+
 
   var svg = d3.select("body")
               .append("svg")
