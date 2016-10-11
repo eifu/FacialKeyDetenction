@@ -63,7 +63,9 @@ function change(data){
       d3.select(this)
       .transition()
       .duration(100)
-      .attr("fill", "orange")
+      .attr("fill", function(d){
+                  return "rgb(0," + parseInt((d[labels[label_index]]/(96*96))*256) + ",0)";
+      })
       .attr("x", function(d){ return xScale(d[labels[label_index]])- xScale.rangeBand()*0.25;})
       .attr("width", function(d){return 1.5*xScale.rangeBand()});
 
@@ -81,6 +83,9 @@ function change(data){
           
       d3.select("#label")
         .text(labels[label_index]);
+
+      d3.select("#range")
+        .text(d[labels[label_index]] + "~" )
          
       //Show the tooltip
       d3.select("#tooltip").classed("hidden", false);
@@ -186,7 +191,9 @@ function init(){
       d3.select(this)
       .transition()
       .duration(100)
-      .attr("fill", "orange")
+      .attr("fill", function(d){
+                  return "rgb(0, " + parseInt((d[labels[label_index]]/(96*96))*256) + ",0)";
+      })
       .attr("x", function(d){ return xScale(d[labels[label_index]])- xScale.rangeBand()*0.25;})
       .attr("width", function(d){return 1.5*xScale.rangeBand()});
 
@@ -204,6 +211,9 @@ function init(){
           
       d3.select("#label")
         .text(labels[label_index]);
+
+      d3.select("#range")
+        .text(d[labels[label_index]] + "~" )
          
       //Show the tooltip
       d3.select("#tooltip").classed("hidden", false);
