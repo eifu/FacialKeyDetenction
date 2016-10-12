@@ -110,6 +110,9 @@ function change(new_data_index){
         })
         .attr("x", function(d){ return xScale(d[labels[label_index]].toFixed(2))})
         .attr("width", function(d){return xScale.rangeBand()});
+    })
+    .on("click", function(){
+      change((label_index+1)%15);
     });
 
     svg.append("g")
@@ -235,6 +238,9 @@ function init(){
         })
         .attr("x", function(d){ return xScale(d[labels[label_index]].toFixed(2))})
         .attr("width", function(d){return xScale.rangeBand()});
+    })
+    .on("click", function(){
+      change((label_index+1)%15);
     });
 
     svg.append("g")
