@@ -19,7 +19,7 @@ function change(new_data_index){
 
 
   var xScale = d3.scale.ordinal()
-                  .rangeRoundBands([0, width - margin.right - margin.left], .1);
+                  .rangeRoundBands([0, width - margin.right - margin.left], .5);
 
   var yScale = d3.scale.linear()
                  .range([height - margin.top - margin.bottom, 0]);
@@ -62,7 +62,7 @@ function change(new_data_index){
     .attr("height", function(d){ return height - margin.top - margin.bottom - yScale(d[labels[label_index]+"_count"]); })
     .attr("width", function(d){ return xScale.rangeBand(); })
     .attr("fill", function(d) {
-          return "rgb(50, 50, " + parseInt(255-(d[labels[label_index]+"_count"]/600)*256) + ")";
+          return "rgb(161,190,230)";
          })
     .on("mouseover", function(d) {
 
@@ -70,19 +70,15 @@ function change(new_data_index){
       .transition()
       .duration(100)
       .attr("fill", function(d){
-                  return "rgb(50," + parseInt(255-(d[labels[label_index]+"_count"]/(600))*256) + ",50)";
+                  return "rgb(50,124,203)";
       })
-      .attr("x", function(d){ return xScale(d[labels[label_index]].toFixed(2))- xScale.rangeBand()*0.25;})
-      .attr("width", function(d){return 1.5*xScale.rangeBand()});
-
-      //Get this bar's x/y values, then augment for the tooltip
-      var xPosition = parseFloat(d3.select(this).attr("x")) + xScale.rangeBand() / 2;
-      var yPosition = parseFloat(d3.select(this).attr("y")) / 2 + height / 2;
+      .attr("x", function(d){ return xScale(d[labels[label_index]].toFixed(2))- xScale.rangeBand()*0.1;})
+      .attr("width", function(d){return 1.2*xScale.rangeBand()});
 
       //Update the tooltip position and value
       d3.select("#tooltip")
-        .style("left", xPosition + "px")
-        .style("top", yPosition + "px"); 
+        .style("left", parseFloat(d3.select(this).attr("x")) + width/2 + "px")
+        .style("top", parseFloat(d3.select(this).attr("y")) + height / 2 + "px"); 
 
       d3.select("#value")
         .text(d[labels[label_index]+"_count"]);
@@ -106,7 +102,7 @@ function change(new_data_index){
         .transition()
         .duration(250)
         .attr("fill", function(d){
-          return "rgb(50, 50, " + parseInt(255-(d[labels[label_index]+"_count"]/600)*256) + ")";
+          return "rgb(161,190,230)";
         })
         .attr("x", function(d){ return xScale(d[labels[label_index]].toFixed(2))})
         .attr("width", function(d){return xScale.rangeBand()});
@@ -147,7 +143,7 @@ function init(){
 
 
   var xScale = d3.scale.ordinal()
-                 .rangeRoundBands([0, width - margin.right - margin.left], .1);
+                 .rangeRoundBands([0, width - margin.right - margin.left], .5);
 
   var yScale = d3.scale.linear()
                  .range([height - margin.top - margin.bottom, 0]);
@@ -189,7 +185,7 @@ function init(){
       .attr("height", function(d){ return height - margin.top - margin.bottom - yScale(d[labels[label_index]+"_count"]); })
       .attr("width", function(d){ return xScale.rangeBand(); })
       .attr("fill", function(d) {
-          return "rgb(50, 50, " + parseInt(255-(d[labels[label_index]+"_count"]/600)*256) + ")";
+          return "rgb(161,190,230)";
          });
 
     d3.selectAll(".bar")
@@ -199,19 +195,15 @@ function init(){
       .transition()
       .duration(100)
       .attr("fill", function(d){
-                  return "rgb(50, " + parseInt(255-(d[labels[label_index]+"_count"]/600)*256) + ",50)";
+                  return "rgb(50,124,203)";
       })
-      .attr("x", function(d){ return xScale(d[labels[label_index]].toFixed(2))- xScale.rangeBand()*0.25;})
-      .attr("width", function(d){return 1.5*xScale.rangeBand()});
-
-      //Get this bar's x/y values, then augment for the tooltip
-      var xPosition = parseFloat(d3.select(this).attr("x")) + xScale.rangeBand() / 2;
-      var yPosition = parseFloat(d3.select(this).attr("y")) / 2 + height / 2;
+      .attr("x", function(d){ return xScale(d[labels[label_index]].toFixed(2))- xScale.rangeBand()*0.1;})
+      .attr("width", function(d){return 1.2*xScale.rangeBand()});
 
       //Update the tooltip position and value
       d3.select("#tooltip")
-        .style("left", xPosition + "px")
-        .style("top", yPosition + "px"); 
+        .style("left", parseFloat(d3.select(this).attr("x")) + width/2 + "px")
+        .style("top", parseFloat(d3.select(this).attr("y")) + height / 2 + "px"); 
 
       d3.select("#value")
         .text(d[labels[label_index]+"_count"]);
@@ -234,7 +226,7 @@ function init(){
         .transition()
         .duration(250)
         .attr("fill", function(d){
-          return "rgb(50, 50, " + parseInt(255-(d[labels[label_index]+"_count"]/600)*256) + ")";
+          return "rgb(161,190,230)";
         })
         .attr("x", function(d){ return xScale(d[labels[label_index]].toFixed(2))})
         .attr("width", function(d){return xScale.rangeBand()});
