@@ -7,135 +7,10 @@ var margin = {top:0, right:0,bottom:20, left:50},
     label_index=0,
     diff = 0;
 
-function change(new_data_index){
-  d3.select("svg").remove();
 
 
-  var svg = d3.select("body")
-              .append("svg")
-              .attr("width", "100%")
-              .attr("height", "100%")
-              .attr("viewBox", "0 0 " + width + " " + height);
-
-
-  var xScale = d3.scale.ordinal()
-                  .rangeRoundBands([0, width - margin.right - margin.left], .5);
-
-  var yScale = d3.scale.linear()
-                 .range([height - margin.top - margin.bottom, 0]);
-
-
-
-  var yAxis = d3.svg.axis()
-    .scale(yScale)
-    .orient("left");
-
-  label_index = new_data_index;
-  d3.csv("equi_width_count_data.csv", function(error, data){
-
-    data = data.map(function(d){ 
-      d[labels[label_index]+"_count"] = +d[labels[label_index]+"_count"]; 
-      d[labels[label_index]] = +d[labels[label_index]]; 
-      return d;
-    });
-
-    diff = (data[1][labels[label_index]] - data[0][labels[label_index]]).toFixed(2);
-
-    yScale.domain([0, d3.max(data, function(d){ return d[labels[label_index]+"_count"]; })]);
-
-    xScale.domain(data.map(function(d){ return d[labels[label_index]].toFixed(2); }));
-
-    var xAxis = d3.svg.axis()
-                      .scale(xScale)
-                      .orient("bottom");
-
-    svg.append("g")  // "g" group element
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    .attr("id", "bars")
-    .selectAll(".bar")
-    .data(data)
-    .enter()
-    .append("rect")
-    .attr("class", "bar")
-    .attr("x", function(d){ return xScale(d[labels[label_index]].toFixed(2)); })
-    .attr("y", function(d){ return yScale(d[labels[label_index]+"_count"]); })
-    .attr("height", function(d){ return height - margin.top - margin.bottom - yScale(d[labels[label_index]+"_count"]); })
-    .attr("width", function(d){ return xScale.rangeBand(); })
-    .attr("fill", function(d) {
-          return "rgb(161,190,230)";
-         })
-    .on("mouseover", function(d) {
-
-      d3.select(this)
-      .transition()
-      .duration(100)
-      .attr("fill", function(d){
-                  return "rgb(50,124,203)";
-      })
-      .attr("x", function(d){ return xScale(d[labels[label_index]].toFixed(2))- xScale.rangeBand()*0.1;})
-      .attr("width", function(d){return 1.2*xScale.rangeBand()});
-
-      //Update the tooltip position and value
-      d3.select("#tooltip")
-        .style("left", parseFloat(d3.select(this).attr("x")) + width/2 + "px")
-        .style("top", parseFloat(d3.select(this).attr("y")) + height / 2 + "px"); 
-
-      d3.select("#value")
-        .text(d[labels[label_index]+"_count"]);
-          
-      d3.select("#label")
-        .text(labels[label_index]);
-
-      d3.select("#range")
-        .text(d[labels[label_index]].toFixed(2) + "~" + (parseFloat(d[labels[label_index]].toFixed(2)) + parseFloat(diff)).toFixed(2) );
-
-         
-      //Show the tooltip
-      d3.select("#tooltip").classed("hidden", false);
-
-    })
-    .on("mouseout", function(){
-
-      d3.select("#tooltip").classed("hidden", true);
-
-      d3.select(this)
-        .transition()
-        .duration(250)
-        .attr("fill", function(d){
-          return "rgb(161,190,230)";
-        })
-        .attr("x", function(d){ return xScale(d[labels[label_index]].toFixed(2))})
-        .attr("width", function(d){return xScale.rangeBand()});
-    })
-    .on("click", function(){
-      change((label_index+1)%15);
-    });
-
-    svg.append("g")
-    .attr("class", "y axis")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-    .call(yAxis);
-
-    svg.append("g")
-    .attr("class", "x axis")
-    .attr("transform", "translate(" + margin.left + "," + (height - margin.bottom) + ")")
-    .call(xAxis);
-  })  
-}
-
-function init(){
-
-  var select = document.getElementById("selectData"); 
-  for(var i = 0; i < labels.length; i++) {
-    var opt = labels[i];
-    var el = document.createElement("option");
-    el.textContent = opt;
-    el.value = i;
-    select.appendChild(el);
-  }
-
-
-  var svg = d3.select("body")
+function draw(){
+    var svg = d3.select("body")
               .append("svg")
               .attr("width", "100%")
               .attr("height", "100%")
@@ -156,8 +31,6 @@ function init(){
   var yAxis = d3.svg.axis()
     .scale(yScale)
     .orient("left");
-
-
   d3.csv("equi_width_count_data.csv", function(error, data){
 
     data = data.map(function(d){ 
@@ -244,5 +117,30 @@ function init(){
     .attr("class", "x axis")
     .attr("transform", "translate(" + margin.left + "," + (height - margin.bottom) + ")")
     .call(xAxis);
-  })          
+  })        
+
+
+}
+
+function init(){
+
+  var select = document.getElementById("selectData"); 
+  for(var i = 0; i < labels.length; i++) {
+    var opt = labels[i];
+    var el = document.createElement("option");
+    el.textContent = opt;
+    el.value = i;
+    select.appendChild(el);
+  }
+
+  draw()
+}
+
+
+function change(new_data_index){
+  d3.select("svg").remove();
+
+
+  draw()
+
 }
