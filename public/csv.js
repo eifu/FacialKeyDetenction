@@ -9,7 +9,7 @@ var margin = {top:0, right:0,bottom:20, left:50},
 
 
 
-function draw(){
+function draw(label_index){
     var svg = d3.select("body")
               .append("svg")
               .attr("width", "100%")
@@ -130,17 +130,17 @@ function init(){
     var el = document.createElement("option");
     el.textContent = opt;
     el.value = i;
+    el.id = "option"+i;
     select.appendChild(el);
   }
 
-  draw()
+  draw(label_index)
 }
 
 
 function change(new_data_index){
   d3.select("svg").remove();
-
-
-  draw()
+  document.getElementById("option"+new_data_index).selected = true;
+  draw(new_data_index);
 
 }
