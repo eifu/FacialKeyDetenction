@@ -97,6 +97,8 @@ function draw(label_index){
     })
     .on("mouseout", function(){
 
+      tooltip.style("opacity", 0);
+
       d3.select(this)
         .transition()
         .duration(250)
@@ -105,6 +107,9 @@ function draw(label_index){
         .attr("width", function(d){return xScale.rangeBand()});
     })
     .on("click", function(){
+
+
+
       change((label_index+1)%15);
     });
 
@@ -132,20 +137,13 @@ function init(){
     select.appendChild(el);
   }
 
-  // var tooltip_test = d3.select("body")
-  //                    .append("div")
-  //                    .attr("id", "tooltip_test")
-  //                    .style("position", "absolute")
-  //                    .style("z-index", "10")
-  //                    .style("visibility", "hidden")
-  //                    .text("test");
-
   draw(label_index)
 }
 
 
 function change(new_data_index){
   d3.select("svg").remove();
+  d3.select("div").remove();
   document.getElementById("option"+new_data_index).selected = true;
   draw(new_data_index);
 
