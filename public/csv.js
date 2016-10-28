@@ -70,7 +70,11 @@ function draw(label_index){
       tooltip.transition()
       .duration(200)
       .style("opacity",.9);
-      tooltip.html('  <div id="tooltip"> <p>label: <span id="label"></span></p> <p><span id="value"></span> counts</p> <p><span id="range"></span></p> </div>  ')
+      tooltip.html('<div id="tooltip">' + 
+                     '<p>label: <span id="label"></span></p>' +
+                     '<p><span id="value"></span> counts</p>' +
+                     '<p><span id="range"></span></p>' +
+                   '</div>')
       .style("left", (d3.event.pageX) + "px")    
       .style("top", (d3.event.pageY - 28) + "px");  
 
