@@ -6,9 +6,17 @@ var margin = {top:0, right:0,bottom:20, left:50},
     width = 700,
     height = 300,
     barPadding = 1,
-    label_index=0,
+    label_index1=0,
+    label_index2=0,
     diff = 0;
 
+var numbers = [];
+
+function draw(label_index1, label_index2){
+
+	
+
+}
 
 
 function init(){
@@ -19,19 +27,15 @@ function init(){
 				.append("svg")
 				.attr("width", width)
 				.attr("height", height);
-	console.log("hi")
-	var numbers = [];
+
 	d3.csv("clustered_data_with15keypoints_1image.csv", function(error, data){
 
 		for (moc_label = 0; moc_label < 15; moc_label++){
 			var temp = [];
 			for (i = 0; i < 2140; i++){
-				var temp = [];
-				console.log(data[i][moc_label]);
-				temp.push(data[i][moc_label]);
+				temp.push(data[i][labels[moc_label]]);
 			}		
 			numbers.push(temp);
-			console.log(temp);
 		}
 
 	});
