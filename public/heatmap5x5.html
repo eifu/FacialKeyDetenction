@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Lab 3</title>
+		<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+		<style type="text/css">
+			/* No style rules here yet */		
+			body {
+				align-content: center;
+				text-align:center;
+			}
+
+			.axis path,
+			.axis line {
+  				fill: none;
+ 				stroke: none;
+			}
+		</style>
+	</head>
+	<body>
+	
+	<script type="text/javascript">
+	var labels = ["left_eye_center", "left_eye_outer_corner", "left_eye_inner_corner", "right_eye_center", "right_eye_inner_corner"];
+
+	var gridSize = 90,
+    h = gridSize,
+    w = gridSize,
+    rectPadding = 60;
+
+	var margin = {top: 150, right: 80, bottom: 30, left: 180},
+    width = 710 - margin.left - margin.right,
+    height = 630 - margin.top - margin.bottom;
+
+	var colorScale = d3.scale.linear()
+     .domain([-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1])
+     .range(["#3182bd", "#6baed6", "#6baed6", "#6baed6","white", "#6baed6","#6baed6", "#fd8d3c","#e6550d" ])
+
+	var svg = d3.select("body").append("svg")
+    			.attr("width", width + margin.left + margin.right)
+    			.attr("height", height + margin.top + margin.bottom)
+ 	 			.append("g")
+   				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+   	var xScale = d3.scale.ordinal().rangeBands([0, width])
+   	var yScale = d3.scale.ordinal().rangeBands([0, height])
+    var xAxis = d3.svg.axis().orient("top");
+    var yAxis = d3.svg.axis().orient("left");
+
+   	d3.csv("corr5x5.csv", function(error, data){
+
+   		var data_foruse =[];
+
+   		data.forEach(function(d){
+   			var x = d[""];
+   			delete d[""];
+   			for (p in d){
+   				data_foruse.push({
+   					x: x,
+   					y: p,
+   					value: +d[p]
+   				});
+   			}
+   			
+   		})
+
+		var heatMap = svg.selectAll(".heatmap")
+    					.data(data_foruse)
+  						.enter().append("rect")
+    					.attr("x", function(d) { return labels.indexOf(d.x) * w; })
+    					.attr("y", function(d) { return labels.indexOf(d.y) * h; })
+    					.attr("width", function(d) { return w; })
+    					.attr("height", function(d) { return h; })
+    					.style("fill", function(d) { return colorScale(d.value); });
+
+    	xScale.domain(labels);
+    	xAxis.scale(xScale);
+       	svg.append("g")
+        	.attr("class", "x axis")
+          	.call(xAxis)
+          	.selectAll("text")
+              .attr("y", -20)
+              .attr("dy", ".5em")
+              .attr("x", 5)
+              .attr("transform", "rotate(-30)")
+              .style("text-anchor", "start")
+
+    	yScale.domain(labels);
+    	yAxis.scale(yScale);
+
+       	svg.append("g")
+        	.attr("class", "y axis")
+          	.call(yAxis)
+              .style("text-anchor", "end")
+   	})
+
+	</script>
+	</body>
+</html>
