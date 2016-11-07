@@ -85,14 +85,14 @@ function draw(index1, index2){
 	});
 }
 
-function changeX(){
-	index1 = (index1+1)%15;
+function changeX(new_i){
+	index1 = new_i;
 	console.log(index1);
 	change(index1, index2);
 }
 
-function changeY(){
-	index2 = (index2+1)%15;
+function changeY(new_i){
+	index2 = new_i;
 	change(index1, index2);
 }
 
@@ -103,19 +103,23 @@ function change(index1, index2){
 
 
 function init(){
-	var select = document.getElementById("x_select_ul"); 
-	for(var i = 0; i < labels.length; i++) {
-    	var a = document.createElement("a");
- 	   	a.textContent = labels[i];
- 	   	a.setAttribute('data-val', i);
- 	   	a.value = labels[i];
- 	   	a.id = "option"+i;
+  var selectX = document.getElementById("selectX"); 
+  var selectY = document.getElementById("selectY");
+  for(var i = 0; i < labels.length; i++) {
+    var el = document.createElement("option");
+    el.textContent =labels[i];
+    el.value = i;
+    el.id = "option"+i;
+    selectX.appendChild(el);
+    
+    var el = document.createElement("option");
+    el.textContent =labels[i];
+    el.value = i;
+    el.id = "option"+i;
+    selectX.appendChild(el);
+    selectY.appendChild(el);
+  }
 
- 	   	var li = document.createElement("li");
- 	   	li.className = "mdl-menu__item";
- 	   	li.appendChild(a);
-   		select.appendChild(li);
-   	}
 
 
 	draw(index1, index2);

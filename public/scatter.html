@@ -4,10 +4,6 @@
 		<meta charset="utf-8">
 		<title>Lab 3</title>
 		<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
-		<script src="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.min.js"></script>
-      <link rel="stylesheet" href="https://storage.googleapis.com/code.getmdl.io/1.0.6/material.indigo-pink.min.css">
-            <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">	  
-
 		<script type="text/javascript" src="scatter.js"></script>
 		<style type="text/css">
 			/* No style rules here yet */		
@@ -32,21 +28,13 @@
 	</head>
 	<body>
 	<nav>
+	<label for="selectX">X</label>
+	<select name="data" id="selectX" onchange="changeX(this.value)"></select>
 
-	<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fullwidth">
-	<input class="mdl-textfield__input" type="text" id="x_select" readonly tabIndex="-1" >
-	<label for="x_select" class="mdl-textfield__label">X axis</label>
-	<ul for="x_select" class="mdl-menu mdl-menu--bottom-left mdl-js-menu" id="x_select_ul">
-		
-	</ul>
-	</div>
-	<div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label getmdl-select getmdl-select__fullwidth">
-            <input class="mdl-textfield__input" type="text" id="y_select" value="Belarus" readonly tabIndex="-1">
-            <label for="y_select" class="mdl-textfield__label">X axis</label>
-            <ul for="y_select" class="mdl-menu mdl-menu--bottom-left mdl-js-menu">
+	<label for="selectY">Y</label>
+	<select name="data" id="selectY" onchange="changeY(this.value)"></select>
 
-            </ul>
-    </div>
+
 	</nav>
 	
 	<script type="text/javascript">
