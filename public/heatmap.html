@@ -13,14 +13,15 @@
 	<body>
 	
 	<script type="text/javascript">
+var labels = ["left_eye_center", "right_eye_center", "left_eye_inner_corner", "left_eye_outer_corner", "right_eye_inner_corner", "right_eye_outer_corner", "left_eyebrow_inner_end", "left_eyebrow_outer_end", "right_eyebrow_inner_end", "right_eyebrow_outer_end", "nose_tip", "mouth_left_corner", "mouth_right_corner", "mouth_center_top_lip", "mouth_center_bottom_lip"];
 
 	var gridSize = 50,
     h = gridSize,
     w = gridSize,
     rectPadding = 60;
 	var margin = {top: 20, right: 80, bottom: 30, left: 50},
-    width = 640 - margin.left - margin.right,
-    height = 380 - margin.top - margin.bottom;
+    width = 900 - margin.left - margin.right,
+    height = 900 - margin.top - margin.bottom;
 
 	var colorScale = d3.scale.linear()
      .domain([-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1])
@@ -35,19 +36,30 @@
 
    	d3.csv("corr.csv", function(error, data){
 
+   		var data_foruse =[];
+
    		data.forEach(function(d){
-   			d = +d;
+   			var x = d[""];
+   			delete d[""];
+   			for (p in d){
+   				data_foruse.push({
+   					x: x,
+   					y: p,
+   					value: +d[p]
+   				});
+   			}
+   			
    		})
-   		console.log(data);
+   	console.log(data_foruse);
 
 	var heatMap = svg.selectAll(".heatmap")
-    				.data(data, function(d) { return d.col + ':' + d.row; })
-  					.enter().append("svg:rect")
-    				.attr("x", function(d) { return d.row * w; })
-    				.attr("y", function(d) { return d.col * h; })
+    				.data(data_foruse)
+  					.enter().append("rect")
+    				.attr("x", function(d) { return labels.indexOf(d.x) * w; })
+    				.attr("y", function(d) { return labels.indexOf(d.y) * h; })
     				.attr("width", function(d) { return w; })
     				.attr("height", function(d) { return h; })
-    				.style("fill", function(d) { return colorScale(d.score); });   		
+    				.style("fill", function(d) { return colorScale(d.value); });   		
    	})
 
 
