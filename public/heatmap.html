@@ -7,21 +7,31 @@
 		<script type="text/javascript" src="heatmap.js"></script>
 		<style type="text/css">
 			/* No style rules here yet */		
+			body {
+				align-content: center;
+				text-align:center;
+			}
 
+			.axis path,
+			.axis line {
+  				fill: none;
+ 				stroke: none;
+			}
 		</style>
 	</head>
 	<body>
 	
 	<script type="text/javascript">
-var labels = ["left_eye_center", "right_eye_center", "left_eye_inner_corner", "left_eye_outer_corner", "right_eye_inner_corner", "right_eye_outer_corner", "left_eyebrow_inner_end", "left_eyebrow_outer_end", "right_eyebrow_inner_end", "right_eyebrow_outer_end", "nose_tip", "mouth_left_corner", "mouth_right_corner", "mouth_center_top_lip", "mouth_center_bottom_lip"];
+	var labels = ["left_eye_center", "right_eye_center", "left_eye_inner_corner", "left_eye_outer_corner", "right_eye_inner_corner", "right_eye_outer_corner", "left_eyebrow_inner_end", "left_eyebrow_outer_end", "right_eyebrow_inner_end", "right_eyebrow_outer_end", "nose_tip", "mouth_left_corner", "mouth_right_corner", "mouth_center_top_lip", "mouth_center_bottom_lip"];
 
-	var gridSize = 50,
+	var gridSize = 30,
     h = gridSize,
     w = gridSize,
     rectPadding = 60;
-	var margin = {top: 20, right: 80, bottom: 30, left: 50},
-    width = 900 - margin.left - margin.right,
-    height = 900 - margin.top - margin.bottom;
+
+	var margin = {top: 150, right: 80, bottom: 30, left: 180},
+    width = 710 - margin.left - margin.right,
+    height = 630 - margin.top - margin.bottom;
 
 	var colorScale = d3.scale.linear()
      .domain([-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1])
@@ -33,6 +43,11 @@ var labels = ["left_eye_center", "right_eye_center", "left_eye_inner_corner", "l
  	 			.append("g")
    				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
+
+   	var xScale = d3.scale.ordinal().rangeBands([0, width])
+   	var yScale = d3.scale.ordinal().rangeBands([0, height])
+    var xAxis = d3.svg.axis().orient("top");
+    var yAxis = d3.svg.axis().orient("left");
 
    	d3.csv("corr.csv", function(error, data){
 
@@ -50,21 +65,36 @@ var labels = ["left_eye_center", "right_eye_center", "left_eye_inner_corner", "l
    			}
    			
    		})
-   	console.log(data_foruse);
 
-	var heatMap = svg.selectAll(".heatmap")
-    				.data(data_foruse)
-  					.enter().append("rect")
-    				.attr("x", function(d) { return labels.indexOf(d.x) * w; })
-    				.attr("y", function(d) { return labels.indexOf(d.y) * h; })
-    				.attr("width", function(d) { return w; })
-    				.attr("height", function(d) { return h; })
-    				.style("fill", function(d) { return colorScale(d.value); });   		
+		var heatMap = svg.selectAll(".heatmap")
+    					.data(data_foruse)
+  						.enter().append("rect")
+    					.attr("x", function(d) { return labels.indexOf(d.x) * w; })
+    					.attr("y", function(d) { return labels.indexOf(d.y) * h; })
+    					.attr("width", function(d) { return w; })
+    					.attr("height", function(d) { return h; })
+    					.style("fill", function(d) { return colorScale(d.value); });
+
+    	xScale.domain(labels);
+    	xAxis.scale(xScale);
+       	svg.append("g")
+        	.attr("class", "x axis")
+          	.call(xAxis)
+          	.selectAll("text")
+              .attr("y", -20)
+              .attr("dy", ".5em")
+              .attr("x", 5)
+              .attr("transform", "rotate(-30)")
+              .style("text-anchor", "start")
+
+    	yScale.domain(labels);
+    	yAxis.scale(yScale);
+
+       	svg.append("g")
+        	.attr("class", "y axis")
+          	.call(yAxis)
+              .style("text-anchor", "end")
    	})
-
-
-
-
 
 	</script>
 	</body>
