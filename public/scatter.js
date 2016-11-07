@@ -2,76 +2,121 @@
 
 var labels = ["left_eye_center", "right_eye_center", "left_eye_inner_corner", "left_eye_outer_corner", "right_eye_inner_corner", "right_eye_outer_corner", "left_eyebrow_inner_end", "left_eyebrow_outer_end", "right_eyebrow_inner_end", "right_eyebrow_outer_end", "nose_tip", "mouth_left_corner", "mouth_right_corner", "mouth_center_top_lip", "mouth_center_bottom_lip"];
 
-var margin = {top:0, right:0,bottom:20, left:50},
-    width = 1000,
-    height =1000,
-    label_index1=0,
-    label_index2=1,
-    diff = 0;
+
+var margin = {top: 40, right: 40, bottom: 40, left: 40},
+    width = 500 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom,
+    index1 = 0,
+    index2 = 1;
 
 var numbers = new Array(2140);
 
 function draw(index1, index2){
-	
-
-	// svg.selectAll("circle")
-	//    .data(numbers)
-	//    .enter()
-	//    .append("circle")
-	//    .attr("cx", function(d) {
-	//    		console.log(d);
-	//    		return d[0];
-	// 	   })
-	//    .attr("cy", function(d) {
-	//    		return d[1];
-	// 	   })
-	//    .attr("r", 5);
-
-}
-
-
-function init(){
 	var svg = d3.select("body")
 				.append("svg")
 				.attr("width", width)
 				.attr("height", height);
 
-	// setup x 
-	var xValue = function(d) { return d[labels[label_index1]];}, // data -> value
-    	xScale = d3.scale.linear().range([0, width]), // value -> display
-    	xMap = function(d) { return xScale(xValue(d));}, // data -> display
-    	xAxis = d3.svg.axis().scale(xScale).orient("bottom");
-
-	// setup y
-	var yValue = function(d) { return d[labels[label_index2]];}, // data -> value
-    	yScale = d3.scale.linear().range([height, 0]), // value -> display
-    	yMap = function(d) { return yScale(yValue(d));}, // data -> display
-    	yAxis = d3.svg.axis().scale(yScale).orient("left");
-
-
 	d3.csv("clustered_data_with15keypoints_1image.csv", function(error, data){
 
 		data.forEach(function(d){
-			d[labels[label_index1]] = +d[labels[label_index1]];
-			d[labels[label_index2]] = +d[labels[label_index2]];
+			d[labels[index1]] = +d[labels[index1]];
+			d[labels[index2]] = +d[labels[index2]];
 						// console.log(d);
 
 		});
+
+		var xScale = d3.scale.linear()
+							.domain([d3.min(data, function(d){return d[labels[index1]]}), 
+									 d3.max(data, function(d){return d[labels[index1]]})
+									 ])  
+							.range([0, width]);
+
+		var xAxis = d3.svg.axis()
+						 .scale(xScale)
+						 .orient("bottom");
+
+
+  		var yScale = d3.scale.linear()
+  							.domain([d3.min(data, function(d){return d[labels[index2]]}), 
+  									 d3.max(data, function(d){return d[labels[index2]]})])
+  							.range([height, 0])
+
+  		var yAxis = d3.svg.axis()
+  						 .scale(yScale)
+  						 .orient("left");
+
+  		// x-axis
+ 		svg.append("g")
+  		    .attr("class", "x axis")
+ 		     .attr("transform", "translate(0," + height + ")")
+ 		     .call(xAxis)
+ 		    .append("text")
+		     .attr("class", "label")
+   		     .attr("x", width)
+   		     .attr("y", -6)
+      		 .style("text-anchor", "end")
+      		 .text(labels[index1]);
+
+		  // y-axis
+  		svg.append("g")
+    	    .attr("class", "y axis")
+    	    .call(yAxis)
+    	   .append("text")
+    	    .attr("class", "label")
+     	    .attr("transform", "rotate(-90)")
+    	    .attr("y", 6)
+    	    .attr("dy", ".71em")
+    	    .style("text-anchor", "end")
+    	    .text(labels[index2]);
+
 
 		svg.selectAll(".dot")
 			.data(data)
 		.enter().append("circle")
 			.attr("class", "dot")
-			.attr("r", 3)
+			.attr("r", 1)
 			.attr("cx", function(d){
-				return d[labels[label_index1]]/10;
+				return xScale(d[labels[index1]]);
 			})
 			.attr("cy", function(d){
-				return d[labels[label_index2]]/10;
+				return yScale(d[labels[index2]]);
 			})
-
-
 	});
+}
 
-	draw(label_index1, label_index2)
+function changeX(){
+	index1 = (index1+1)%15;
+	console.log(index1);
+	change(index1, index2);
+}
+
+function changeY(){
+	index2 = (index2+1)%15;
+	change(index1, index2);
+}
+
+function change(index1, index2){
+	d3.select("svg").remove();
+	draw(index1, index2);
+}
+
+
+function init(){
+	var select = document.getElementById("x_select_ul"); 
+	for(var i = 0; i < labels.length; i++) {
+    	var a = document.createElement("a");
+ 	   	a.textContent = labels[i];
+ 	   	a.setAttribute('data-val', i);
+ 	   	a.value = labels[i];
+ 	   	a.id = "option"+i;
+
+ 	   	var li = document.createElement("li");
+ 	   	li.className = "mdl-menu__item";
+ 	   	li.appendChild(a);
+   		select.appendChild(li);
+   	}
+
+
+	draw(index1, index2);
 }
