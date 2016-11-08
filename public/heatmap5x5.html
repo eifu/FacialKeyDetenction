@@ -10,6 +10,10 @@
 				align-content: center;
 				text-align:center;
 			}
+      .frame {
+        fill: none;
+        stroke: #aaa;
+      }
 
 			.axis path,
 			.axis line {
@@ -23,77 +27,88 @@
 	<script type="text/javascript">
 	var labels = ["left_eye_center", "left_eye_outer_corner", "left_eye_inner_corner", "right_eye_center", "right_eye_inner_corner"];
 
-	var gridSize = 90,
-    h = gridSize,
-    w = gridSize,
-    rectPadding = 60;
-
-	var margin = {top: 150, right: 80, bottom: 30, left: 180},
-    width = 710 - margin.left - margin.right,
-    height = 630 - margin.top - margin.bottom;
-
-	var colorScale = d3.scale.linear()
-     .domain([-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1])
-     .range(["#3182bd", "#6baed6", "#6baed6", "#6baed6","white", "#6baed6","#6baed6", "#fd8d3c","#e6550d" ])
-
-	var svg = d3.select("body").append("svg")
-    			.attr("width", width + margin.left + margin.right)
-    			.attr("height", height + margin.top + margin.bottom)
- 	 			.append("g")
-   				.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+var width = 960,
+    size = 130,
+    padding = 20;
 
 
-   	var xScale = d3.scale.ordinal().rangeBands([0, width])
-   	var yScale = d3.scale.ordinal().rangeBands([0, height])
+   	var xScale = d3.scale.linear()
+    .range([padding/2, size - padding / 2]);
+
+
+   	var yScale = d3.scale.linear()
+    .range([size - padding /2, padding / 2]);
+
+
     var xAxis = d3.svg.axis().orient("top");
     var yAxis = d3.svg.axis().orient("left");
 
-   	d3.csv("corr5x5.csv", function(error, data){
+   	d3.csv("scatter5x5.csv", function(error, data){
+      var domainByTrait = {},
+          traits = d3.keys(data[0]),
+          num = traits.length;
 
-   		var data_foruse =[];
+        console.log(num);
 
-   		data.forEach(function(d){
-   			var x = d[""];
-   			delete d[""];
-   			for (p in d){
-   				data_foruse.push({
-   					x: x,
-   					y: p,
-   					value: +d[p]
-   				});
-   			}
-   			
-   		})
+   		traits.forEach(function(t){
+           	domainByTrait[t] = d3.extent(data, function(d){return d[t];})		
+   		});
 
-		var heatMap = svg.selectAll(".heatmap")
-    					.data(data_foruse)
-  						.enter().append("rect")
-    					.attr("x", function(d) { return labels.indexOf(d.x) * w; })
-    					.attr("y", function(d) { return labels.indexOf(d.y) * h; })
-    					.attr("width", function(d) { return w; })
-    					.attr("height", function(d) { return h; })
-    					.style("fill", function(d) { return colorScale(d.value); });
+      console.log(domainByTrait);
 
-    	xScale.domain(labels);
-    	xAxis.scale(xScale);
-       	svg.append("g")
-        	.attr("class", "x axis")
-          	.call(xAxis)
-          	.selectAll("text")
-              .attr("y", -20)
-              .attr("dy", ".5em")
-              .attr("x", 5)
-              .attr("transform", "rotate(-30)")
-              .style("text-anchor", "start")
+      var svg = d3.select("body").append("svg")
+          .attr("width", size * (num) + padding)
+          .attr("height", size * (num) + padding)
+        .append("g")
+          .attr("transform", "translate(" + padding + "," + padding/2 + ")");
+           
 
-    	yScale.domain(labels);
-    	yAxis.scale(yScale);
+		var cell = svg.selectAll(".cell")
+    					.data(cross(traits, traits))
+  						.enter().append("g")
+              .attr("class", "cell")
+              .attr("transform", function(d){return "translate(" + (num - d.i - 1) * size + "," + d.j * size + ")"; })
+              .each(plot)
 
-       	svg.append("g")
-        	.attr("class", "y axis")
-          	.call(yAxis)
-              .style("text-anchor", "end")
-   	})
+              cell.filter(function(d){return d.i == d.j;}).append("text")
+              .attr("x", padding)
+              .attr("y", padding)
+              .attr("dy", ".71em")
+              .text(function(d) {return d.x;})
+
+            function plot(p){
+              var cell = d3.select(this);
+
+              xScale.domain(domainByTrait[p.x]);
+              yScale.domain(domainByTrait[p.y]);
+
+              cell.append("rect")
+              .attr("class", "frame")
+    					.attr("x", padding/2)
+    					.attr("y", padding/2)
+    					.attr("width", size - padding)
+    					.attr("height", size - padding)
+
+              cell.selectAll("circle")
+              .data(data)
+              .enter().append("circle")
+              .attr("cx", function(d) { return xScale(d[p.x]); })
+              .attr("cy", function(d) { return yScale(d[p.y]); })
+              .attr("r", 1);
+
+            }
+
+   	});
+
+    function cross(a, b) {
+      var c = [], n = a.length, m = b.length, i, j;
+      for (i = -1; ++i < n;) {
+        for (j = -1; ++j < m;) {
+          c.push({x: a[i], i: i, y: b[j], j: j});
+        }
+      }
+      return c;
+    }
 
 	</script>
 	</body>
