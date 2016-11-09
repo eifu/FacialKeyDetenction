@@ -37,6 +37,39 @@ function draw(index1, index2){
   									 d3.max(data, function(d){return d[labels[index2]]})])
   							.range([height, 0])
 
+    var xAxis = d3.svg.axis()
+             .scale(xScale)
+             .orient("bottom");
+
+    var yAxis = d3.svg.axis()
+               .scale(yScale)
+               .orient("left");
+
+      // x-axis
+    svg.append("g")
+          .attr("class", "x axis")
+         .attr("transform", "translate(0," + height/2 + ")")
+         .call(xAxis)
+        .append("text")
+         .attr("class", "label")
+           .attr("x", width)
+           .attr("y", -6)
+           .style("text-anchor", "end")
+           .text(labels[index1]);
+
+      // y-axis
+      svg.append("g")
+          .attr("class", "y axis")
+          .attr("transform", "translate("+width/2+",0)")
+          .call(yAxis)
+         .append("text")
+          .attr("class", "label")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text(labels[index2]);
+
 		svg.selectAll(".dot")
 			.data(data)
 		.enter().append("circle")
@@ -49,22 +82,6 @@ function draw(index1, index2){
 				return yScale(d[labels[index2]]);
 			})
 	});
-}
-
-function changeX(new_i){
-	index1 = new_i;
-	console.log(index1);
-	change(index1, index2);
-}
-
-function changeY(new_i){
-	index2 = new_i;
-	change(index1, index2);
-}
-
-function change(index1, index2){
-	d3.select("svg").remove();
-	draw(index1, index2);
 }
 
 
