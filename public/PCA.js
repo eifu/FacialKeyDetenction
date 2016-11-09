@@ -1,17 +1,10 @@
-
-
-var labels = ["left_eye_center", "right_eye_center", "left_eye_inner_corner", "left_eye_outer_corner", "right_eye_inner_corner", "right_eye_outer_corner", "left_eyebrow_inner_end", "left_eyebrow_outer_end", "right_eyebrow_inner_end", "right_eyebrow_outer_end", "nose_tip", "mouth_left_corner", "mouth_right_corner", "mouth_center_top_lip", "mouth_center_bottom_lip"];
-
-
 var margin = {top: 40, right: 40, bottom: 40, left: 40},
-    width = 500 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom,
-    index1 = 0,
-    index2 = 3;
+    width = 700 - margin.left - margin.right,
+    height = 700 - margin.top - margin.bottom;
 
 var numbers = new Array(2140);
 
-function draw(index1, index2){
+function init(){
 	var svg = d3.select("body")
 				.append("svg")
 				.attr("width", width)
@@ -27,14 +20,14 @@ function draw(index1, index2){
     console.log(data);
 
 		var xScale = d3.scale.linear()
-							.domain([d3.min(data, function(d){return d[labels[index1]]}), 
-									 d3.max(data, function(d){return d[labels[index1]]})
+							.domain([d3.min(data, function(d){return d["left_eye_center"]}), 
+									 d3.max(data, function(d){return d["left_eye_center"]})
 									 ])  
 							.range([0, width]);
 
   		var yScale = d3.scale.linear()
-  							.domain([d3.min(data, function(d){return d[labels[index2]]}), 
-  									 d3.max(data, function(d){return d[labels[index2]]})])
+  							.domain([d3.min(data, function(d){return d["left_eye_outer_corner"]}), 
+  									 d3.max(data, function(d){return d["left_eye_outer_corner"]})])
   							.range([height, 0])
 
     var xAxis = d3.svg.axis()
@@ -55,7 +48,7 @@ function draw(index1, index2){
            .attr("x", width)
            .attr("y", -6)
            .style("text-anchor", "end")
-           .text(labels[index1]);
+           .text("left eye center");
 
       // y-axis
       svg.append("g")
@@ -68,7 +61,7 @@ function draw(index1, index2){
           .attr("y", 6)
           .attr("dy", ".71em")
           .style("text-anchor", "end")
-          .text(labels[index2]);
+          .text("left eye outer corner");
 
 		svg.selectAll(".dot")
 			.data(data)
@@ -76,16 +69,10 @@ function draw(index1, index2){
 			.attr("class", "dot")
 			.attr("r", 1)
 			.attr("cx", function(d){
-				return xScale(d[labels[index1]]);
+				return xScale(d["left_eye_center"]);
 			})
 			.attr("cy", function(d){
-				return yScale(d[labels[index2]]);
+				return yScale(d["left_eye_outer_corner"]);
 			})
 	});
-}
-
-
-function init(){
-
-	draw(index1, index2);
 }
