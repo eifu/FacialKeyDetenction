@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>Lab 3</title>
+		<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
+		<script type="text/javascript" src="PCA.js"></script>
+		<style type="text/css">
+			/* No style rules here yet */		
+			body {
+				font: 11px sans-serif;
+				align-content: center;
+				text-align:center;
+			}
+
+			.axis path,
+			.axis line {
+ 			 fill: none;
+ 			 stroke: #000;
+ 			 stroke-width:5;
+ 			 shape-rendering: crispEdges;
+ 			}
+ 			ul {
+ 				list-style:none;
+ 			}
+
+		</style>
+	</head>
+	<body>
+	<nav>
+	<label for="selectX">X</label>
+	<select name="data" id="selectX" onchange="changeX(this.value)"></select>
+
+	<label for="selectY">Y</label>
+	<select name="data" id="selectY" onchange="changeY(this.value)"></select>
+
+
+	</nav>
+	
+	<script type="text/javascript">
+			init();
+	</script>
+	</body>
+</html>
