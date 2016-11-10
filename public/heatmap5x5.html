@@ -27,20 +27,23 @@
 	<script type="text/javascript">
 	var labels = ["left_eye_center", "left_eye_outer_corner", "left_eye_inner_corner", "right_eye_center", "right_eye_inner_corner"];
 
+
+
 var width = 960,
     size = 130,
     padding = 20;
 
 
-   	var xScale = d3.scale.linear()
+
+   	var xCellScale = d3.scale.linear()
     .range([padding/2, size - padding / 2]);
 
 
-   	var yScale = d3.scale.linear()
+   	var yCellScale = d3.scale.linear()
     .range([size - padding /2, padding / 2]);
 
 
-    var xAxis = d3.svg.axis().orient("top");
+    var xAxis = d3.svg.axis().orient("bottom");
     var yAxis = d3.svg.axis().orient("left");
 
    	d3.csv("scatter5x5.csv", function(error, data){
@@ -48,19 +51,45 @@ var width = 960,
           traits = d3.keys(data[0]),
           num = traits.length;
 
-        console.log(num);
-
    		traits.forEach(function(t){
            	domainByTrait[t] = d3.extent(data, function(d){return d[t];})		
    		});
 
-      console.log(domainByTrait);
-
       var svg = d3.select("body").append("svg")
-          .attr("width", size * (num) + padding)
-          .attr("height", size * (num) + padding)
+          .attr("width", size * num + padding*9)
+          .attr("height", size * num + padding*6)
         .append("g")
-          .attr("transform", "translate(" + padding + "," + padding/2 + ")");
+          .attr("transform", "translate(" + padding*8 + "," + padding*5 + ")");
+
+    var xScale = d3.scale.ordinal()
+    .rangeBands([size * num + padding, 0]);
+
+
+      xScale.domain(labels);
+      xAxis.scale(xScale);
+      
+      svg.append("g")
+          .attr("class", "x axis")
+            .call(xAxis)
+            .selectAll("text")
+              .attr("y", -15)
+              .attr("dy", ".5em")
+              .attr("x", -35)
+              .attr("transform", "rotate(-30)")
+              .style("text-anchor", "start");
+
+
+      var yScale = d3.scale.ordinal()
+      .rangeBands([0, size * num + padding]);
+
+      yScale.domain(labels);
+      yAxis.scale(yScale);
+
+      svg.append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+          .style("text-anchor", "end");
+
            
 
 		var cell = svg.selectAll(".cell")
@@ -71,16 +100,16 @@ var width = 960,
               .each(plot)
 
               cell.filter(function(d){return d.i == d.j;}).append("text")
-              .attr("x", padding)
-              .attr("y", padding)
-              .attr("dy", ".71em")
+              .attr("x", padding-3)
+              .attr("y", padding+5)
+              .attr("dy", ".41em")
               .text(function(d) {return d.x;})
 
             function plot(p){
               var cell = d3.select(this);
 
-              xScale.domain(domainByTrait[p.x]);
-              yScale.domain(domainByTrait[p.y]);
+              xCellScale.domain(domainByTrait[p.x]);
+              yCellScale.domain(domainByTrait[p.y]);
 
               cell.append("rect")
               .attr("class", "frame")
@@ -92,8 +121,8 @@ var width = 960,
               cell.selectAll("circle")
               .data(data)
               .enter().append("circle")
-              .attr("cx", function(d) { return xScale(d[p.x]); })
-              .attr("cy", function(d) { return yScale(d[p.y]); })
+              .attr("cx", function(d) { return xCellScale(d[p.x]); })
+              .attr("cy", function(d) { return yCellScale(d[p.y]); })
               .attr("r", 1);
 
             }
