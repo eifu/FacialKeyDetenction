@@ -99,12 +99,6 @@ var width = 960,
               .attr("transform", function(d){return "translate(" + (num - d.i - 1) * size + "," + d.j * size + ")"; })
               .each(plot)
 
-              cell.filter(function(d){return d.i == d.j;}).append("text")
-              .attr("x", padding-3)
-              .attr("y", padding+5)
-              .attr("dy", ".41em")
-              .text(function(d) {return d.x;})
-
             function plot(p){
               var cell = d3.select(this);
 
