@@ -1,138 +1,174 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8">
-		<title>Lab 3</title>
-		<script type="text/javascript" src="http://d3js.org/d3.v3.min.js"></script>
-		<style type="text/css">
-			/* No style rules here yet */		
-			body {
-				align-content: center;
-				text-align:center;
-			}
-      .frame {
-        fill: none;
-        stroke: #aaa;
+  <head>
+    <meta charset="utf-8">
+    <title>Lab 3</title>
+    <script type="text/javascript" src="http://d3js.org/d3.v4.min.js"></script>
+    <style type="text/css">
+      /* No style rules here yet */   
+      body {
+      align-content: center;
+      text-align:center;
       }
+      .frame {
+      fill: none;
+      stroke: #aaa;
+      }
+      
+      .axis path,
+      .axis line {
+      fill: none;
+      stroke: none;
+      }
+    </style>
+  </head>
+  <body>
+    <script type="text/javascript">
+      var labels = ["left_eye_center", "left_eye_outer_corner", "left_eye_inner_corner", "right_eye_center", "right_eye_inner_corner"];
+      
+      
+      
+      var width = 960,
+      size = 130,
+      padding = 20;
+      
 
-			.axis path,
-			.axis line {
-  				fill: none;
- 				stroke: none;
-			}
-		</style>
-	</head>
-	<body>
-	
-	<script type="text/javascript">
-	var labels = ["left_eye_center", "left_eye_outer_corner", "left_eye_inner_corner", "right_eye_center", "right_eye_inner_corner"];
+      
+      var xCellScale = d3.scaleLinear()
+      .range([padding/2, size - padding / 2]);
+      
+      
+      var yCellScale = d3.scaleLinear()
+      .range([size - padding /2, padding / 2]);
+      
+      
+      var xAxis = d3.axisBottom();
+      var yAxis = d3.axisLeft();
 
-
-
-var width = 960,
-    size = 130,
-    padding = 20;
-
-
-
-   	var xCellScale = d3.scale.linear()
-    .range([padding/2, size - padding / 2]);
-
-
-   	var yCellScale = d3.scale.linear()
-    .range([size - padding /2, padding / 2]);
-
-
-    var xAxis = d3.svg.axis().orient("bottom");
-    var yAxis = d3.svg.axis().orient("left");
-
-   	d3.csv("scatter5x5.csv", function(error, data){
+      var svg;
+      
+      d3.csv("scatter5x5.csv", function(error, data){
       var domainByTrait = {},
-          traits = d3.keys(data[0]),
-          num = traits.length;
-
-   		traits.forEach(function(t){
-           	domainByTrait[t] = d3.extent(data, function(d){return d[t];})		
-   		});
-
-      var svg = d3.select("body").append("svg")
-          .attr("width", size * num + padding*9)
-          .attr("height", size * num + padding*6)
-        .append("g")
-          .attr("transform", "translate(" + padding*8 + "," + padding*5 + ")");
-
-    var xScale = d3.scale.ordinal()
-    .rangeBands([size * num + padding, 0]);
-
+      traits = d3.keys(data[0]),
+      num = traits.length;
+      
+      traits.forEach(function(t){
+      domainByTrait[t] = d3.extent(data, function(d){return d[t];})   
+      });
+      
+      svg = d3.select("body").append("svg")
+      .attr("width", size * num + padding*9)
+      .attr("height", size * num + padding*6)
+      .append("g")
+      .attr("transform", "translate(" + padding*8 + "," + padding*5 + ")");
+      
+      var xScale = d3.scaleBand()
+      .rangeRound([size * num + padding, 0]);
+      
 
       xScale.domain(labels);
       xAxis.scale(xScale);
       
       svg.append("g")
-          .attr("class", "x axis")
-            .call(xAxis)
-            .selectAll("text")
-              .attr("y", -15)
-              .attr("dy", ".5em")
-              .attr("x", -35)
-              .attr("transform", "rotate(-30)")
-              .style("text-anchor", "start");
-
-
-      var yScale = d3.scale.ordinal()
-      .rangeBands([0, size * num + padding]);
-
+      .attr("class", "x axis")
+      .call(xAxis)
+      .selectAll("text")
+      .attr("y", -15)
+      .attr("dy", ".5em")
+      .attr("x", -35)
+      .attr("transform", "rotate(-30)")
+      .style("text-anchor", "start");
+      
+      
+      var yScale = d3.scaleBand()
+      .rangeRound([0, size * num + padding]);
+      
       yScale.domain(labels);
       yAxis.scale(yScale);
-
+      
       svg.append("g")
-          .attr("class", "y axis")
-          .call(yAxis)
-          .style("text-anchor", "end");
+      .attr("class", "y axis")
+      .call(yAxis)
+      .style("text-anchor", "end");
+      
+      
+      
+      var cell = svg.selectAll(".cell")
+      .data(cross(traits, traits))
+      .enter().append("g")
+      .attr("class", "cell")
+      .attr("transform", function(d){return "translate(" + (num - d.i - 1) * size + "," + d.j * size + ")"; })
+      .each(plot)
 
-           
+      function plot(p){
+      var cell = d3.select(this);
+      
+      xCellScale.domain(domainByTrait[p.x]);
+      yCellScale.domain(domainByTrait[p.y]);
+      
+      cell.append("rect")
+      .attr("class", "frame")
+      .attr("x", padding/2)
+      .attr("y", padding/2)
+      .attr("width", size - padding)
+      .attr("height", size - padding)
+      
+      cell.selectAll("circle")
+      .data(data)
+      .enter().append("circle")
+      .attr("cx", function(d) { return xCellScale(d[p.x]); })
+      .attr("cy", function(d) { return yCellScale(d[p.y]); })
+      .attr("r", 1);
+      
+      cell.append("g")
+      .call(d3.brush()
+      .on("brush", brushed)
+      .on("end", brushended)
+      )
 
-		var cell = svg.selectAll(".cell")
-    					.data(cross(traits, traits))
-  						.enter().append("g")
-              .attr("class", "cell")
-              .attr("transform", function(d){return "translate(" + (num - d.i - 1) * size + "," + d.j * size + ")"; })
-              .each(plot)
-
-            function plot(p){
-              var cell = d3.select(this);
-
-              xCellScale.domain(domainByTrait[p.x]);
-              yCellScale.domain(domainByTrait[p.y]);
-
-              cell.append("rect")
-              .attr("class", "frame")
-    					.attr("x", padding/2)
-    					.attr("y", padding/2)
-    					.attr("width", size - padding)
-    					.attr("height", size - padding)
-
-              cell.selectAll("circle")
-              .data(data)
-              .enter().append("circle")
-              .attr("cx", function(d) { return xCellScale(d[p.x]); })
-              .attr("cy", function(d) { return yCellScale(d[p.y]); })
-              .attr("r", 1);
-
-            }
-
-   	});
-
-    function cross(a, b) {
-      var c = [], n = a.length, m = b.length, i, j;
-      for (i = -1; ++i < n;) {
-        for (j = -1; ++j < m;) {
-          c.push({x: a[i], i: i, y: b[j], j: j});
-        }
       }
-      return c;
-    }
 
-	</script>
-	</body>
+            function brushed() {
+        var s = d3.event.selection,
+        x0 = s[0][0],
+        y0 = s[0][1],
+        dx = s[1][0] - x0,
+        dy = s[1][1] - y0;
+         // console.log(s);
+
+         svg.selectAll('circle')
+            .style("fill", function (d) {
+                if (xCellScale(d.x) >= x0 && xCellScale(d.x) <= x0 + dx && yCellScale(d.y) >= y0 && yCellScale(d.y) <= y0 + dy)
+                     { return "#ec7014"; }
+                else { return "#4292c6"; }
+            });
+     }
+
+     function brushended() {
+         if (!d3.event.selection) {
+             svg.selectAll('circle')
+               .transition()
+               .duration(150)
+               .ease(d3.easeLinear)
+               .style("fill", "#4292c6");
+         }
+     }
+      
+      });
+      
+      function cross(a, b) {
+        var c = [], n = a.length, m = b.length, i, j;
+        for (i = -1; ++i < n;) {
+         for (j = -1; ++j < m;) {
+              c.push({x: a[i], i: i, y: b[j], j: j});
+          }
+        }
+        return c;
+      }
+              
+
+   
+
+  </script>
+  </body>
 </html>
