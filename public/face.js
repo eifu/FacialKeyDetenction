@@ -1,4 +1,25 @@
+
+
 function face(index, idName){
+
+    var width = 500,
+    height = 500;
+
+    var svg = d3.select("#g1").append("svg")
+    .attr("id", "g1_svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g");
+
+    var xScale = d3.scaleLinear()
+    .range([0, width])
+    .domain([0, 96]);
+
+    var yScale = d3.scaleLinear()
+    .range([0, height])
+    .domain([0, 96]);
+
+
     var width =  d3.select("#"+idName).style("width"),
     height = d3.select("#"+idName).style("height");
 
@@ -8,28 +29,41 @@ function face(index, idName){
         var dx = 96;
         var dy = 96;
 
-        d3.select("#"+idName).append("canvas")
-        .attr("width", dx)
-        .attr("height", dy)
-        .style("width", width)
-        .style("height", height)
-        .call(drawImage);
-
-        function drawImage(canvas) {
-            var context = canvas.node().getContext("2d"),
-                imageData = context.createImageData(dx, dy);
-
-            console.log(data[index])
-            for (var y = 0; y < dy; y++) {
-                for (var x = 0; x < dx; x++) {
-                    var c = data[index][y * 96 + x];
-                    imageData.data[4*(y * 96 + x)] =c;
-                    imageData.data[4*(y * 96 + x) + 1] =c;
-                    imageData.data[4*(y * 96 + x) + 2] =c;
-                    imageData.data[4*(y * 96 + x) + 3] =255;
-                }
+        function randomData(data) {
+            var d = [];
+            for (i = 0; i < 96*96; i++) {
+                d.push({
+                x: i % 96,
+                y: Math.floor(i / 96),
+                c: +data[i]
+                });
             }
-            context.putImageData(imageData, 0, 0);
+            return d;
         }
+
+
+        var ds = randomData(data[index]);
+
+        console.log(ds);
+
+
+        svg.selectAll(".dot")
+        .data(ds)
+        .enter().append("rect")
+        .attr("class", "dot")
+        .attr("width", 5)
+        .attr("height", 5)
+        .attr("x", function(d){
+
+            return xScale(d.x);
+        })
+        .attr("y", function(d){
+            return yScale(d.y);
+        })
+        .attr("fill", function(d){
+            return "rgb("+d.c+","+d.c+","+d.c+")";
+        });
+
+        console.log("done");
     });
 }
