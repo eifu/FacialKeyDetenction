@@ -248,12 +248,12 @@ d3.csv("equi_width_count_data.csv", function(error, data){
       .style("left", (d3.event.pageX) + "px")    
       .style("top", (d3.event.pageY - 28) + "px");  
 
-
+      console.log(this);
       d3.select(this)
       .transition()
       .duration(100)
       .attr("fill", function(d){return "rgb(50,124,203)";})
-      .attr("x", function(d){ return xScale(d[labels[index]].toFixed(2))- xScale.bandwidth()*0.1;})
+      .attr("x", function(d){ return xScale((+d[labels[index]]).toFixed(2))- xScale.bandwidth()*0.1;})
       .attr("width", function(d){return 1.2*xScale.bandwidth()});
 
       console.log(parseFloat(d3.select(this).attr("y"))+ "px");
@@ -265,17 +265,17 @@ d3.csv("equi_width_count_data.csv", function(error, data){
         .text(labels[index]);
 
       d3.select("#"+idName+"_range")
-        .text(d[labels[index]].toFixed(2) + "~" + (parseFloat(d[labels[index]].toFixed(2)) + parseFloat(diff)).toFixed(2));
+        .text((+d[labels[index]]).toFixed(2) + "~" + (parseFloat((+d[labels[index]]).toFixed(2)) + parseFloat(diff)).toFixed(2));
          
 
     })
     .on("mouseout", function(){
-      tooltip.style("opacity", 0);
+      d3.select("#tooltip"+idName).style("opacity", 0);
       d3.select(this)
         .transition()
         .duration(250)
         .attr("fill", function(d){return "rgb(161,190,230)";})
-        .attr("x", function(d){ return xScale(d[labels[index]].toFixed(2))})
+        .attr("x", function(d){ return xScale((+d[labels[index]]).toFixed(2))})
         .attr("width", function(d){return xScale.bandwidth()});
     })
 
