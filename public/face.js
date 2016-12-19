@@ -60,7 +60,7 @@ function facialKeys(index, idName){
 
     var width = parseInt(d3.select("#g1").style("width"),10),
     height = parseInt(d3.select("#g1").style("height"),10);
-    
+
     d3.csv("xy_data.csv", function(error, data){
         data.forEach(function(d){
             d[labels[index]+"_x"] = +d[labels[index]+"_x"];
@@ -80,11 +80,45 @@ function facialKeys(index, idName){
         .data(data)
         .enter().append("circle")
         .attr("class", "dot")
-        .attr("r", 5)
+        .attr("r", 2)
         .attr("cx", function(d){return xScale(d[labels[index]+"_x"])})
         .attr("cy", function(d){return yScale(d[labels[index]+"_y"])})
         .attr("opacity", 0.7)
         .style("fill", "#4292c6");
+
+        d3.select("#"+idName).append("g")
+        .call(d3.brush().extent([[0, 0], [width, height]])
+            .on("brush", brushed)
+            .on("end", brushended));
+
+        function brushed() {
+            var s = d3.event.selection,
+            x0 = s[0][0],
+            y0 = s[0][1],
+            dx = s[1][0] - x0,
+            dy = s[1][1] - y0;
+            
+            d3.select("body").selectAll('circle')
+            .style("fill", function (d) {
+                var xValue = d[labels[index]+"_x"];
+                var yValue = d[labels[index]+"_y"];
+                if ( xScale(xValue) >= x0 && xScale(xValue) <= x0 + dx &&
+                yScale(yValue) >= y0 && yScale(yValue) <= y0 + dy)
+                     { return "#ec7014"; }
+                else { return "#4292c6"; }
+            });
+        }  
+
+        function brushended() {
+            if (!d3.event.selection) {
+
+                d3.select("body").selectAll('circle')
+                .transition()
+                .duration(150)
+                .ease(d3.easeLinear)
+                .style("fill", "#4292c6");
+            }
+        }
 
     });
 

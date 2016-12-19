@@ -5,8 +5,13 @@
         <style type="text/css">
             
             #g1 {
-                width: 500px;
-                height: 500px;
+                width: 200px;
+                height: 200px;
+            }
+
+             #g2 {
+                width: 200px;
+                height: 200px;
             }
 
         </style>
@@ -15,6 +20,7 @@
 <body>  
     <script src="http://d3js.org/d3.v4.min.js"></script>
     <p id="g1"></p>
+    <p id="g2"></p>
 
 <script>
 var labels = ["left_eye_center", "right_eye_center", 
@@ -25,11 +31,11 @@ var labels = ["left_eye_center", "right_eye_center",
           "nose_tip", "mouth_left_corner", "mouth_right_corner", 
           "mouth_center_top_lip", "mouth_center_bottom_lip"];
 
-var index1 = 10;
+var index1 = 0;
 var N = 2140;
 
-var width = 500;
-var height = 500;
+var width = 200;
+var height = 200;
 
 
 
@@ -41,14 +47,33 @@ var svg = d3.select("#g1").append("svg")
 
 
 var layer1 = svg.append("g")
-.attr("id", "layer1");
+.attr("id", "g1_layer1");
 
 var layer2 = svg.append("g")
-.attr("id", "layer2");
+.attr("id", "g1_layer2");
 
-face(7, "layer1");
+face(7, "g1_layer1");
 
-facialKeys(index1, "layer2")
+facialKeys(index1, "g1_layer2")
+
+
+index1 = index1 + 1;
+var svg = d3.select("#g2").append("svg")
+    .attr("id", "g2_svg")
+    .attr("width", width)
+    .attr("height", height)
+    .append("g");
+
+
+svg.append("g")
+.attr("id", "g2_layer1");
+
+svg.append("g")
+.attr("id", "g2_layer2");
+
+face(7, "g2_layer1");
+
+facialKeys(index1, "g2_layer2")
 
 </script>
 </body>
