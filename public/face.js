@@ -178,6 +178,16 @@ d3.csv("corr.csv", function(error, data){
     console.log(v2);
     facialKeys(v1, "g1_layer2");
     facialKeys(v2, "g2_layer2");
+
+
+    d3.select("#g4_svg").html(null);
+    d3.select("#g5_svg").html(null);
+    d3.select("#tooltipg4").html(null);
+    d3.select("#tooltipg5").html(null);
+
+    bar(v1, "g4");
+    bar(v2, "g5");
+
   });
 
 });
@@ -195,7 +205,7 @@ var tooltip = d3.select("#"+idName).append("div")
           .attr("id", "tooltip"+idName)
           .style("opacity", 0);
 
-var xAxis = d3.axisBottom(xScale);
+var xAxis = d3.axisBottom(xScale).tickFormat("");
 
 var yAxis = d3.axisLeft(yScale);
 
@@ -287,7 +297,7 @@ d3.csv("equi_width_count_data.csv", function(error, data){
     d3.select("#"+idName+"_svg").append("g")
     .attr("class", "x axis")
     .attr("transform", "translate(" + 50 + "," + (height - 20) + ")")
-    .call(xAxis);
+    .call(xAxis.ticks(0));
   })
 
 
