@@ -168,8 +168,8 @@ d3.csv("corr.csv", function(error, data){
   .style("fill", function(d) { return colorScale(d.value); })
   .on("click", function(d){
     console.log(d3.select(this).style("x"));
-    var v1 = parseInt(d3.select(this).style("x"), 10)/20;
-    var v2 = parseInt(d3.select(this).style("y"), 10)/20;
+    var v1 = parseInt(d3.select(this).style("x"), 10)/w;
+    var v2 = parseInt(d3.select(this).style("y"), 10)/h;
     d3.select("#textg1_layer2").html(null);
     d3.select("#textg2_layer2").html(null);
     d3.select("#g1_layer2").html(null);
@@ -241,9 +241,9 @@ d3.csv("equi_width_count_data.csv", function(error, data){
       .duration(200)
       .style("opacity",.9);
       d3.select("#tooltip"+idName).html('<div id="tooltip">' + 
-                     '<p>label: <span id="label"></span></p>' +
-                     '<p><span id="value"></span> counts</p>' +
-                     '<p><span id="range"></span></p>' +
+                     '<p>label: <span id="'+idName+'_label"></span></p>' +
+                     '<p><span id="' + idName+'_value"></span> counts</p>' +
+                     '<p><span id="'+ idName +'_range"></span></p>' +
                    '</div>')
       .style("left", (d3.event.pageX) + "px")    
       .style("top", (d3.event.pageY - 28) + "px");  
@@ -258,13 +258,13 @@ d3.csv("equi_width_count_data.csv", function(error, data){
 
       console.log(parseFloat(d3.select(this).attr("y"))+ "px");
 
-      d3.select("#value")
+      d3.select("#"+idName+"_value")
         .text(d[labels[index]+"_count"]);
           
-      d3.select("#label")
+      d3.select("#"+idName+"_label")
         .text(labels[index]);
 
-      d3.select("#range")
+      d3.select("#"+idName+"_range")
         .text(d[labels[index]].toFixed(2) + "~" + (parseFloat(d[labels[index]].toFixed(2)) + parseFloat(diff)).toFixed(2));
          
 
