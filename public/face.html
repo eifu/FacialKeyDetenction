@@ -23,6 +23,10 @@ heml{
   height: 200px;
   margin:auto;
 }
+#g4 {
+  width: 200px;
+  height: 200px;
+}
 
 .division{
   width:50%;
@@ -55,7 +59,12 @@ heml{
 <div class="no-division">
   <p id="g3"></p>
 </div>
-
+<div class="division">
+  <p id="g4"></p>
+</div>
+<div class="division">
+  <p id="g5"></p>
+</div>
 <script>
 var labels = ["left_eye_center", "right_eye_center", 
           "left_eye_inner_corner", "left_eye_outer_corner", 
@@ -72,13 +81,12 @@ var width = 200;
 var height = 200;
 
 
-
+//////////////////////////////////////////////
 var g1_svg = d3.select("#g1").append("svg")
     .attr("id", "g1_svg")
     .attr("width", width)
     .attr("height", height)
     .append("g");
-
 
 g1_svg.append("g")
 .attr("id", "g1_layer1");
@@ -88,11 +96,10 @@ g1_svg.append("g")
 .attr("id", "textg1_layer2")
 
 face(7, "g1_layer1");
-
 facialKeys(index1, "g1_layer2")
 
-
-index1 = index1 + 1;
+//////////////////////////////////////////////
+index2 = 1;
 var g2_svg = d3.select("#g2").append("svg")
     .attr("id", "g2_svg")
     .attr("width", width)
@@ -108,17 +115,87 @@ g2_svg.append("g")
 .attr("id", "textg2_layer2");
 
 face(7, "g2_layer1");
+facialKeys(index2, "g2_layer2")
 
-facialKeys(index1, "g2_layer2")
-
+//////////////////////////////////////////////
 var g3_svg = d3.select("#g3").append("svg")
     .attr("id", "g3_svg")
     .attr("width", 300)
     .attr("height", 300)
     .append("g");
 
-
 heatmap("g3_svg")
+
+//////////////////////////////////////////////
+var g4_svg = d3.select("#g4").append("svg")
+    .attr("id", "g4_svg")
+    .attr("width", 300)
+    .attr("height", 300)
+    .append("g");
+
+
+d3.csv("clustered_data_with15keypoints_1image.csv", function(error, data){
+
+  data.forEach(function(d){
+      d[labels[index1]] = +d[labels[index1]];
+      d[labels[index2]] = +d[labels[index2]];
+            // console.log(d);
+  });
+
+  var xScale = d3.scaleLinear()
+              .domain([d3.min(data, function(d){return d[labels[index1]]}), 
+                   d3.max(data, function(d){return d[labels[index1]]})
+                   ])  
+              .range([0, width]);
+
+  var xAxis = d3.axisBottom(xScale);
+          
+
+
+  var yScale = d3.scaleLinear()
+                .domain([d3.min(data, function(d){return d[labels[index2]]}), d3.max(data, function(d){return d[labels[index2]]})])
+                .range([height, 0])
+
+  var yAxis = d3.axisLeft(yScale);
+
+      // x-axis
+    d3.select("#g4_svg").append("g")
+          .attr("class", "x axis")
+         .attr("transform", "translate(0," + height + ")")
+         .call(xAxis)
+        .append("text")
+         .attr("class", "label")
+           .attr("x", width)
+           .attr("y", -6)
+           .style("text-anchor", "end")
+           .text(labels[index1]);
+
+      // y-axis
+      d3.select("#g4_svg").append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+         .append("text")
+          .attr("class", "label")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text(labels[index2]);
+
+
+    d3.select("#g4_svg").selectAll(".dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("class", "dot")
+      .attr("r", 1)
+      .attr("cx", function(d){
+        return xScale(d[labels[index1]]);
+      })
+      .attr("cy", function(d){
+        return yScale(d[labels[index2]]);
+      })
+  });
+
 
 
 </script>
