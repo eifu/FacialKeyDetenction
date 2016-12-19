@@ -121,6 +121,40 @@ function facialKeys(index, idName){
         }
 
     });
-
 }
 
+
+function heatmap(idName){
+
+var h = 20, w = 20;
+var colorScale = d3.scaleLinear()
+.domain([-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1])
+.range(["#3182bd", "#6baed6", "#6baed6", "#6baed6","white", "#6baed6","#6baed6", "#fd8d3c","#e6550d" ])
+d3.csv("corr.csv", function(error, data){
+  var data_foruse=[];
+  data.forEach(function(d){
+    var x = d[""];
+    delete d[""];
+    for (p in d){
+      data_foruse.push({
+        x:x,
+        y:p,
+        value: +d[p]  
+      })
+    }
+  });
+
+  console.log(data_foruse);
+
+  d3.select("#"+idName).selectAll(".heatmap")
+  .data(data_foruse)
+  .enter().append("rect")
+  .attr("x", function(d){return labels.indexOf(d.x) * w})
+  .attr("y", function(d) { return labels.indexOf(d.y) * h; })
+  .attr("width", function(d) { return w; })
+  .attr("height", function(d) { return h; })
+  .style("fill", function(d) { return colorScale(d.value); });
+
+  console.log("done2");
+});
+}

@@ -4,21 +4,20 @@
 <script type="text/javascript" src="face.js"></script>
 <style type="text/css">
             
-#g1 {
-width: 200px;
-height: 200px;
+#g1{
+  width: 200px;
+  height: 200px;
 }
 
-
 #g2 {
-width: 200px;
-height: 200px;
+  width: 200px;
+  height: 200px;
 }
 
 #g3 {
-width: 200px;
-height: 200px;
-margin:auto;
+  width: 200px;
+  height: 200px;
+  margin:auto;
 }
 
 .division{
@@ -36,9 +35,6 @@ margin:auto;
   height: 30%;
   float:left;
   margin-top: 5px;
-}
-
-.no-division p{
 }
 
 </style>
@@ -86,7 +82,7 @@ g1_svg.append("g")
 g1_svg.append("g")
 .attr("id", "g1_layer2");
 
-// face(7, "g1_layer1");
+face(7, "g1_layer1");
 
 facialKeys(index1, "g1_layer2")
 
@@ -105,7 +101,7 @@ g2_svg.append("g")
 g2_svg.append("g")
 .attr("id", "g2_layer2");
 
-// face(7, "g2_layer1");
+face(7, "g2_layer1");
 
 facialKeys(index1, "g2_layer2")
 
@@ -115,37 +111,9 @@ var g3_svg = d3.select("#g3").append("svg")
     .attr("height", 300)
     .append("g");
 
-var h = 20, w = 20;
-var colorScale = d3.scaleLinear()
-.domain([-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1])
-.range(["#3182bd", "#6baed6", "#6baed6", "#6baed6","white", "#6baed6","#6baed6", "#fd8d3c","#e6550d" ])
-d3.csv("corr.csv", function(error, data){
-  var data_foruse=[];
-  data.forEach(function(d){
-    var x = d[""];
-    delete d[""];
-    for (p in d){
-      data_foruse.push({
-        x:x,
-        y:p,
-        value: +d[p]  
-      })
-    }
-  });
 
-  console.log(data_foruse);
+heatmap("g3_svg")
 
-  g3_svg.selectAll(".heatmap")
-  .data(data_foruse)
-  .enter().append("rect")
-  .attr("x", function(d){return labels.indexOf(d.x) * w})
-  .attr("y", function(d) { return labels.indexOf(d.y) * h; })
-  .attr("width", function(d) { return w; })
-  .attr("height", function(d) { return h; })
-  .style("fill", function(d) { return colorScale(d.value); });
-
-  console.log("done2");
-});
 
 </script>
 </body>
