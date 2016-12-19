@@ -24,8 +24,9 @@ function face(index, idName){
             var d = [];
             for (i = 0; i < 96*96; i++) {
                 d.push({
-                x: i % 96,
-                y: Math.floor(i / 96),
+                // x: i % 96,
+                // y: Math.floor(i / 96),
+                i:i,
                 c: +data[i]
                 });
             }
@@ -42,10 +43,10 @@ function face(index, idName){
         .attr("width", width/dx)
         .attr("height", height/dy)
         .attr("x", function(d){
-            return xScale(d.x);
+            return xScale(d.i % 96);
         })
         .attr("y", function(d){
-            return yScale(d.y);
+            return yScale(Math.floor(d.i / 96));
         })
         .attr("fill", function(d){
             return "rgb("+d.c+","+d.c+","+d.c+")";
@@ -53,12 +54,27 @@ function face(index, idName){
 
     });
 }
+var labels = ["left_eye_center", "right_eye_center", 
+          "left_eye_inner_corner", "left_eye_outer_corner", 
+          "right_eye_inner_corner", "right_eye_outer_corner", 
+          "left_eyebrow_inner_end", "left_eyebrow_outer_end", 
+          "right_eyebrow_inner_end", "right_eyebrow_outer_end", 
+          "nose_tip", "mouth_left_corner", "mouth_right_corner", 
+          "mouth_center_top_lip", "mouth_center_bottom_lip"];
 
 
 function facialKeys(index, idName){
 
     var width = parseInt(d3.select("#g1").style("width"),10),
     height = parseInt(d3.select("#g1").style("height"),10);
+
+    d3.select("#text"+idName).append("text")
+    .text(labels[index])
+    .style("fill", "#ec7014")
+    .attr("y", height)
+    .attr("alignment", "center")
+    .attr("font-family", "Roboto")
+    .attr("font-size",18);
 
     d3.csv("xy_data.csv", function(error, data){
         data.forEach(function(d){
@@ -154,9 +170,10 @@ d3.csv("corr.csv", function(error, data){
     console.log(d3.select(this).style("x"));
     var v1 = parseInt(d3.select(this).style("x"), 10)/20;
     var v2 = parseInt(d3.select(this).style("y"), 10)/20;
+    d3.select("#textg1_layer2").html(null);
+    d3.select("#textg2_layer2").html(null);
     d3.select("#g1_layer2").html(null);
     d3.select("#g2_layer2").html(null);
-
     console.log(v1);
     console.log(v2);
     facialKeys(v1, "g1_layer2");
