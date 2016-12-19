@@ -25,7 +25,7 @@ var labels = ["left_eye_center", "right_eye_center",
           "nose_tip", "mouth_left_corner", "mouth_right_corner", 
           "mouth_center_top_lip", "mouth_center_bottom_lip"];
 
-var index1 = 0;
+var index1 = 10;
 var N = 2140;
 
 var width = 500;
@@ -40,36 +40,15 @@ var svg = d3.select("#g1").append("svg")
     .append("g");
 
 
-face(4, "g1");
+var layer1 = svg.append("g")
+.attr("id", "layer1");
 
+var layer2 = svg.append("g")
+.attr("id", "layer2");
 
-// d3.csv("xy_data.csv", function(error, data){
+face(7, "layer1");
 
-//     data.forEach(function(d){
-//         d[labels[index1]+"_x"] = +d[labels[index1]+"_x"];
-//         d[labels[index1]+"_y"] = +d[labels[index1]+"_y"];
-//     });
-
-//     console.log(data);
-
-//     var xScale = d3.scaleLinear()
-//     .range([0, width])
-//     .domain([0, 96]);
-
-//     var yScale = d3.scaleLinear()
-//     .range([0, height])
-//     .domain([0, 96]);
-
-//     var dot = svg.selectAll(".dot")
-//     .data(data)
-//     .enter().append("circle")
-//         .attr("class", "dot")
-//         .attr("r", 5)
-//         .attr("cx", function(d){return xScale(d[labels[index1]+"_x"])})
-//         .attr("cy", function(d){return yScale(d[labels[index1]+"_y"])})
-
-
-// });
+facialKeys(index1, "layer2")
 
 </script>
 </body>

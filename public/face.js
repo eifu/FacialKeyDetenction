@@ -2,14 +2,8 @@
 
 function face(index, idName){
 
-    var width = 500,
-    height = 500;
-
-    // var svg = d3.select("#g1").append("svg")
-    // .attr("id", "g1_svg")
-    // .attr("width", width)
-    // .attr("height", height)
-    // .append("g");
+    var width = parseInt(d3.select("#g1").style("width"),10),
+    height = parseInt(d3.select("#g1").style("height"),10);
 
     var xScale = d3.scaleLinear()
     .range([0, width])
@@ -41,10 +35,10 @@ function face(index, idName){
 
         var ds = retrieveData(data[index]);
 
-        d3.select("svg").selectAll(".dot")
+        d3.select("#"+idName).selectAll(".pixel")
         .data(ds)
         .enter().append("rect")
-        .attr("class", "dot")
+        .attr("class", "pixel")
         .attr("width", width/dx)
         .attr("height", height/dy)
         .attr("x", function(d){
@@ -60,3 +54,39 @@ function face(index, idName){
         console.log("done");
     });
 }
+
+
+function facialKeys(index, idName){
+
+    var width = parseInt(d3.select("#g1").style("width"),10),
+    height = parseInt(d3.select("#g1").style("height"),10);
+    
+    d3.csv("xy_data.csv", function(error, data){
+        data.forEach(function(d){
+            d[labels[index]+"_x"] = +d[labels[index]+"_x"];
+            d[labels[index]+"_y"] = +d[labels[index]+"_y"];
+        });
+        console.log(data);
+
+        var xScale = d3.scaleLinear()
+        .range([0, width])
+        .domain([0, 96]);
+
+        var yScale = d3.scaleLinear()
+        .range([0, height])
+        .domain([0, 96]);
+
+        var dot = d3.select("#"+idName).selectAll(".dot")
+        .data(data)
+        .enter().append("circle")
+        .attr("class", "dot")
+        .attr("r", 5)
+        .attr("cx", function(d){return xScale(d[labels[index]+"_x"])})
+        .attr("cy", function(d){return yScale(d[labels[index]+"_y"])})
+        .attr("opacity", 0.7)
+        .style("fill", "#4292c6");
+
+    });
+
+}
+
