@@ -51,7 +51,6 @@ function face(index, idName){
             return "rgb("+d.c+","+d.c+","+d.c+")";
         });
 
-        console.log("done");
     });
 }
 
@@ -66,7 +65,6 @@ function facialKeys(index, idName){
             d[labels[index]+"_x"] = +d[labels[index]+"_x"];
             d[labels[index]+"_y"] = +d[labels[index]+"_y"];
         });
-        console.log(data);
 
         var xScale = d3.scaleLinear()
         .range([0, width])
@@ -144,8 +142,6 @@ d3.csv("corr.csv", function(error, data){
     }
   });
 
-  console.log(data_foruse);
-
   d3.select("#"+idName).selectAll(".heatmap")
   .data(data_foruse)
   .enter().append("rect")
@@ -153,8 +149,19 @@ d3.csv("corr.csv", function(error, data){
   .attr("y", function(d) { return labels.indexOf(d.y) * h; })
   .attr("width", function(d) { return w; })
   .attr("height", function(d) { return h; })
-  .style("fill", function(d) { return colorScale(d.value); });
+  .style("fill", function(d) { return colorScale(d.value); })
+  .on("click", function(d){
+    console.log(d3.select(this).style("x"));
+    var v1 = parseInt(d3.select(this).style("x"), 10)/20;
+    var v2 = parseInt(d3.select(this).style("y"), 10)/20;
+    d3.select("#g1_layer2").html(null);
+    d3.select("#g2_layer2").html(null);
 
-  console.log("done2");
+    console.log(v1);
+    console.log(v2);
+    facialKeys(v1, "g1_layer2");
+    facialKeys(v2, "g2_layer2");
+  });
+
 });
 }
