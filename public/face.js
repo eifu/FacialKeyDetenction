@@ -1,30 +1,18 @@
 function face(index, idName){
-    var width = 500,
-    height = 500;
-
-    console.log(document.getElementById(idName));
+    var width =  d3.select("#"+idName).style("width"),
+    height = d3.select("#"+idName).style("height");
 
     d3.csv("imageTest.csv", function(error, data){
         if (error) throw error;
 
-        console.log(data[0]);
-
         var dx = 96;
         var dy = 96;
-
-        var xScale = d3.scaleLinear()
-        .domain([0, 96])
-        .range([0,width]);
-
-        var yScale = d3.scaleLinear()
-        .domain([0,96])
-        .range([0,height]);
 
         d3.select("#"+idName).append("canvas")
         .attr("width", dx)
         .attr("height", dy)
-        .style("width", width+"px")
-        .style("height", height + "px")
+        .style("width", width)
+        .style("height", height)
         .call(drawImage);
 
         function drawImage(canvas) {
