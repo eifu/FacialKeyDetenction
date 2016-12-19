@@ -140,7 +140,7 @@ function facialKeys(index, idName){
 
 function heatmap(idName){
 
-var h = 20, w = 20;
+var h = 12, w = 12;
 var colorScale = d3.scaleLinear()
 .domain([-1, -0.75, -0.5, -0.25, 0, 0.25, 0.5, 0.75, 1])
 .range(["#3182bd", "#6baed6", "#6baed6", "#6baed6","white", "#6baed6","#6baed6", "#fd8d3c","#e6550d" ])
@@ -181,4 +181,114 @@ d3.csv("corr.csv", function(error, data){
   });
 
 });
+}
+
+function bar(index, idName){
+var xScale = d3.scaleBand()
+                 .range([0, width]);
+
+var yScale = d3.scaleLinear()
+                 .range([height, 0]);
+
+var tooltip = d3.select("#"+idName).append("div")
+          .attr("class", "tooltip")
+          .attr("id", "tooltip"+idName)
+          .style("opacity", 0);
+
+var xAxis = d3.axisBottom(xScale);
+
+var yAxis = d3.axisLeft(yScale);
+
+d3.csv("equi_width_count_data.csv", function(error, data){
+
+    data = data.map(function(d){ 
+      d[labels[index]+"_count"] = +d[labels[index]+"_count"]; 
+      d[labels[index]] = +d[labels[index]]; 
+      return d;
+    });
+    diff = (data[1][labels[index]] - data[0][labels[index]]).toFixed(2);
+
+    yScale.domain([0, d3.max(data, function(d){ return d[labels[index]+"_count"];})]);
+
+    xScale.domain(data.map(function(d){ return d[labels[index]].toFixed(2); }));
+
+
+    var rects = d3.select("#"+idName+"_svg").append("g")  // "g" group element
+      .attr("transform", "translate(" + 50 + "," +  0 + ")")
+      .attr("id", "bars")
+      .selectAll(".bar")
+      .data(data)
+      .enter()
+      .append("rect")
+      .attr("class", "bar")
+      .attr("x", function(d){ return xScale(d[labels[index]].toFixed(2)); })
+      .attr("y", function(d){ return yScale(d[labels[index]+"_count"]); })
+      .attr("height", function(d){
+        if (height - 20 - yScale(d[labels[index]+"_count"]) < 0){
+          return 0;
+        }
+        return height - 20 - yScale(d[labels[index]+"_count"]); 
+      })
+      .attr("width", function(d){ return xScale.bandwidth(); })
+      .attr("fill", function(d) {
+          return "rgb(161,190,230)";
+         });
+
+    d3.selectAll(".bar")
+    .on("mouseover", function(d) {
+
+      d3.select("#tooltip"+idName).transition()
+      .duration(200)
+      .style("opacity",.9);
+      d3.select("#tooltip"+idName).html('<div id="tooltip">' + 
+                     '<p>label: <span id="label"></span></p>' +
+                     '<p><span id="value"></span> counts</p>' +
+                     '<p><span id="range"></span></p>' +
+                   '</div>')
+      .style("left", (d3.event.pageX) + "px")    
+      .style("top", (d3.event.pageY - 28) + "px");  
+
+
+      d3.select(this)
+      .transition()
+      .duration(100)
+      .attr("fill", function(d){return "rgb(50,124,203)";})
+      .attr("x", function(d){ return xScale(d[labels[index]].toFixed(2))- xScale.bandwidth()*0.1;})
+      .attr("width", function(d){return 1.2*xScale.bandwidth()});
+
+      console.log(parseFloat(d3.select(this).attr("y"))+ "px");
+
+      d3.select("#value")
+        .text(d[labels[index]+"_count"]);
+          
+      d3.select("#label")
+        .text(labels[index]);
+
+      d3.select("#range")
+        .text(d[labels[index]].toFixed(2) + "~" + (parseFloat(d[labels[index]].toFixed(2)) + parseFloat(diff)).toFixed(2));
+         
+
+    })
+    .on("mouseout", function(){
+      tooltip.style("opacity", 0);
+      d3.select(this)
+        .transition()
+        .duration(250)
+        .attr("fill", function(d){return "rgb(161,190,230)";})
+        .attr("x", function(d){ return xScale(d[labels[index]].toFixed(2))})
+        .attr("width", function(d){return xScale.bandwidth()});
+    })
+
+    d3.select("#"+idName+"_svg").append("g")
+    .attr("class", "y axis")
+    .attr("transform", "translate(" + 50 + "," + 0 + ")")
+    .call(yAxis);
+
+    d3.select("#"+idName+"_svg").append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(" + 50 + "," + (height - 20) + ")")
+    .call(xAxis);
+  })
+
+
 }
