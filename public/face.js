@@ -112,7 +112,7 @@ function facialKeys(index, idName){
             dx = s[1][0] - x0,
             dy = s[1][1] - y0;
             
-            d3.select("body").selectAll('circle')
+            d3.select("#face").selectAll('circle')
             .style("fill", function (d) {
                 var xValue = d[labels[index]+"_x"];
                 var yValue = d[labels[index]+"_y"];
@@ -126,7 +126,7 @@ function facialKeys(index, idName){
         function brushended() {
             if (!d3.event.selection) {
 
-                d3.select("body").selectAll('circle')
+                d3.select("#face").selectAll('circle')
                 .transition()
                 .duration(150)
                 .ease(d3.easeLinear)
@@ -184,9 +184,11 @@ d3.csv("corr.csv", function(error, data){
     d3.select("#g5_svg").html(null);
     d3.select("#tooltipg4").html(null);
     d3.select("#tooltipg5").html(null);
-
     bar(v1, "g4");
     bar(v2, "g5");
+
+    d3.select("#g6_svg").html(null);
+    scatter(v1,v2);
 
   });
 
@@ -300,5 +302,68 @@ d3.csv("equi_width_count_data.csv", function(error, data){
     .call(xAxis.ticks(0));
   })
 
+}
+
+
+function scatter(index1, index2){
+d3.csv("clustered_data_with15keypoints_1image.csv", function(error, data){
+
+  data.forEach(function(d){
+      d[labels[index1]] = +d[labels[index1]];
+      d[labels[index2]] = +d[labels[index2]];
+            // console.log(d);
+  });
+
+  var xScale = d3.scaleLinear()
+              .domain([d3.min(data, function(d){return d[labels[index1]]}), d3.max(data, function(d){return d[labels[index1]]})])  
+              .range([0, width]);
+
+  var xAxis = d3.axisBottom(xScale);
+          
+
+
+  var yScale = d3.scaleLinear()
+                .domain([d3.min(data, function(d){return d[labels[index2]]}), d3.max(data, function(d){return d[labels[index2]]})])
+                .range([height, 0])
+
+  var yAxis = d3.axisLeft(yScale);
+
+      // x-axis
+    d3.select("#g6_svg").append("g")
+          .attr("class", "x axis")
+         .attr("transform", "translate(0," + height + ")")
+         .call(xAxis)
+        .append("text")
+         .attr("class", "label")
+           .attr("x", width)
+           .attr("y", -6)
+           .style("text-anchor", "end")
+           .text(labels[index1]);
+
+      // y-axis
+      d3.select("#g6_svg").append("g")
+          .attr("class", "y axis")
+          .call(yAxis)
+         .append("text")
+          .attr("class", "label")
+          .attr("transform", "rotate(-90)")
+          .attr("y", 6)
+          .attr("dy", ".71em")
+          .style("text-anchor", "end")
+          .text(labels[index2]);
+
+
+    d3.select("#g6_svg").selectAll(".dot")
+      .data(data)
+    .enter().append("circle")
+      .attr("class", "dot")
+      .attr("r", 1)
+      .attr("cx", function(d){
+        return xScale(d[labels[index1]]);
+      })
+      .attr("cy", function(d){
+        return yScale(d[labels[index2]]);
+      })
+  });
 
 }

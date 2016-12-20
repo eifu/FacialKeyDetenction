@@ -74,11 +74,13 @@ heml{
 </head>
 <body>  
 <script src="http://d3js.org/d3.v4.min.js"></script>
+<div id="face">
 <div class="division">
     <p id="g1"></p>
 </div>
 <div class="division">
   <p id="g2"></p>
+</div>
 </div>
 <div class="no-division">
   <p id="g3"></p>
@@ -123,7 +125,7 @@ g1_svg.append("g")
 g1_svg.append("g")
 .attr("id", "textg1_layer2")
 
-// face(7, "g1_layer1");
+face(7, "g1_layer1");
 facialKeys(index1, "g1_layer2")
 
 //////////////////////////////////////////////
@@ -142,7 +144,7 @@ g2_svg.append("g")
 g2_svg.append("g")
 .attr("id", "textg2_layer2");
 
-// face(7, "g2_layer1");
+face(7, "g2_layer1");
 facialKeys(index2, "g2_layer2")
 
 //////////////////////////////////////////////
@@ -182,69 +184,7 @@ var g6_svg = d3.select("#g6").append("svg")
     .append("g");
 
 
-d3.csv("clustered_data_with15keypoints_1image.csv", function(error, data){
-
-  data.forEach(function(d){
-      d[labels[index1]] = +d[labels[index1]];
-      d[labels[index2]] = +d[labels[index2]];
-            // console.log(d);
-  });
-
-  var xScale = d3.scaleLinear()
-              .domain([d3.min(data, function(d){return d[labels[index1]]}), 
-                   d3.max(data, function(d){return d[labels[index1]]})
-                   ])  
-              .range([0, width]);
-
-  var xAxis = d3.axisBottom(xScale);
-          
-
-
-  var yScale = d3.scaleLinear()
-                .domain([d3.min(data, function(d){return d[labels[index2]]}), d3.max(data, function(d){return d[labels[index2]]})])
-                .range([height, 0])
-
-  var yAxis = d3.axisLeft(yScale);
-
-      // x-axis
-    d3.select("#g6_svg").append("g")
-          .attr("class", "x axis")
-         .attr("transform", "translate(0," + height + ")")
-         .call(xAxis)
-        .append("text")
-         .attr("class", "label")
-           .attr("x", width)
-           .attr("y", -6)
-           .style("text-anchor", "end")
-           .text(labels[index1]);
-
-      // y-axis
-      d3.select("#g6_svg").append("g")
-          .attr("class", "y axis")
-          .call(yAxis)
-         .append("text")
-          .attr("class", "label")
-          .attr("transform", "rotate(-90)")
-          .attr("y", 6)
-          .attr("dy", ".71em")
-          .style("text-anchor", "end")
-          .text(labels[index2]);
-
-
-    d3.select("#g6_svg").selectAll(".dot")
-      .data(data)
-    .enter().append("circle")
-      .attr("class", "dot")
-      .attr("r", 1)
-      .attr("cx", function(d){
-        return xScale(d[labels[index1]]);
-      })
-      .attr("cy", function(d){
-        return yScale(d[labels[index2]]);
-      })
-  });
-
-
+scatter(index1, index2)
 
 </script>
 </body>
